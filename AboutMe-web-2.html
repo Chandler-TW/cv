@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Da Chen - Senior Architect | Data & Enterprise Strategy</title>
+
+    <!-- Chosen Palette: Elegant Neutral (#F8F7F2, #FFFFFF, #2C2C2C, #C5A47E) -->
+    <!-- Application Structure Plan: A single-page application designed as a narrative journey for an interviewer. It flows from a high-level introduction ('Profile') to tangible proof ('Projects'), then to a demonstration of analytical skill ('Showcase'), and finally to a direct 'Value Proposition'. This structure is more persuasive than a standard resume layout, guiding the user logically through the candidate's qualifications. Navigation is facilitated by a sticky header with smooth-scrolling links. Interactivity is introduced through a career timeline, clickable tabs for project deep-dives, and dynamic charts to demonstrate data visualization capabilities, making the exploration engaging and self-directed. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Career History -> Goal: Show progression -> Viz: CSS Timeline -> Interaction: Visual scan -> Justification: More engaging than a list.
+        - Report Info: Project Details -> Goal: Compare projects, avoid clutter -> Viz: Tabbed Interface -> Interaction: Click to reveal -> Justification: Organizes dense information, allows user to focus on one project at a time.
+        - Report Info: Data Architecture Framework -> Goal: Demonstrate structured thinking and expertise -> Viz: 3x3 Grid of mini-charts -> Interaction: Hover for tooltips -> Justification: Clearly visualizes the 3-layer, 9-module framework, making a complex concept digestible and professional. -> Library/Method: Chart.js for all mini-charts to ensure consistency.
+        - Report Info: Data Flow between systems -> Goal: Illustrate business process understanding -> Viz: Scatter plot with custom plugin for nodes and connectors -> Interaction: Visual scan -> Justification: More intuitive and specific than a generic chart, shows real-world application. -> Library/Method: Chart.js with custom plugin.
+        - Report Info: Data Service for different roles -> Goal: Explain the "Data as a Service" concept -> Viz: Horizontal Stacked Bar Chart -> Interaction: Hover for details -> Justification: Clearly links user personas to the types of data services they consume.
+        - Report Info: Data Modeling Process -> Goal: Showcase understanding of modeling stages -> Viz: Horizontal Bar Chart -> Interaction: Hover for details -> Justification: Visualizes the Conceptual -> Logical -> Physical flow, reflecting deep expertise. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F2; /* Warm Neutral Background */
+            color: #2C2C2C;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        .accent-color { color: #C5A47E; }
+        .accent-bg { background-color: #C5A47E; }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #C5A47E;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+        }
+        .timeline {
+            position: relative;
+            border-left: 2px solid #e5e7eb;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 2.5rem; 
+            padding-bottom: 2rem;
+        }
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 0.375rem; 
+            height: 1rem;
+            width: 1rem;
+            background-color: #fff;
+            border: 3px solid #C5A47E;
+            border-radius: 9999px;
+            transform: translateX(-50%); 
+        }
+        .tab {
+            cursor: pointer;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            border-bottom-color: #C5A47E;
+            color: #2C2C2C;
+            font-weight: 600;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .mini-chart-container {
+            position: relative;
+            width: 100%;
+            height: 150px;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="header" class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-display font-bold text-gray-800">Da Chen</a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#profile" class="nav-link text-gray-600">Profile</a>
+                <a href="#projects" class="nav-link text-gray-600">Projects</a>
+                <a href="#showcase" class="nav-link text-gray-600">Showcase</a>
+                <a href="#value" class="nav-link text-gray-600">Value Proposition</a>
+            </div>
+            <a href="mailto:email@example.com" class="hidden md:block accent-bg text-white font-semibold px-4 py-2 rounded-full hover:opacity-90 transition-opacity">Contact Me</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-16">
+
+        <!-- Hero Section -->
+        <section class="text-center mb-16 md:mb-24">
+            <h1 class="text-4xl md:text-6xl font-bold font-display tracking-tight text-gray-900">Senior Architect</h1>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
+                Specializing in transforming complex data landscapes into strategic assets that drive business innovation, operational excellence, and unparalleled customer experiences for global luxury brands.
+            </p>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="mb-16 md:mb-24 scroll-mt-24">
+            <div class="card p-6 md:p-10">
+                <h2 class="text-3xl font-bold font-display mb-8 text-center">1. Professional Profile</h2>
+                <div class="grid md:grid-cols-5 gap-8 md:gap-12">
+                    <div class="md:col-span-3">
+                        <h3 class="font-display text-2xl font-semibold mb-6">Career Journey</h3>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <h4 class="font-semibold text-lg">Senior Architect</h4>
+                                <p class="text-gray-600">Thoughtworks</p>
+                                <p class="text-sm text-gray-500 mt-1">Leading data platform and governance projects for multinational corporations.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <h4 class="font-semibold text-lg">IT Consultant Manager</h4>
+                                <p class="text-gray-600">PwC China</p>
+                                <p class="text-sm text-gray-500 mt-1">Advised global companies on IT architecture and strategic planning.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <h4 class="font-semibold text-lg">ICT Product Architect</h4>
+                                <p class="text-gray-600">Huawei</p>
+                                <p class="text-sm text-gray-500 mt-1">Designed and planned the core ICT data middle-platform.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <h4 class="font-semibold text-lg">Senior Cloud Product Architect</h4>
+                                <p class="text-gray-600">UFIDA</p>
+                                <p class="text-sm text-gray-500 mt-1">Focused on cloud platform application architecture and implementation.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <h3 class="font-display text-2xl font-semibold mb-6">Key Engagements</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Rolex</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Shell</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Nestlé</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Swire</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Leading ICT Enterprise</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Top Battery Manufacturer</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Australian Financial Institution</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="mb-16 md:mb-24 scroll-mt-24">
+            <h2 class="text-3xl font-bold font-display mb-8 text-center">2. Project Deep Dive</h2>
+             <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">Here are a few selected projects that demonstrate my hands-on experience in architecting and delivering high-impact data solutions. Click each tab to explore the challenge, my role, and the outcome.</p>
+            <div class="card p-6 md:p-10">
+                <div id="tabs-container" class="border-b border-gray-200 flex flex-wrap justify-center mb-6">
+                    <div class="tab active" data-tab="project1">Battery Manufacturer</div>
+                    <div class="tab" data-tab="project2">ERP Company</div>
+                    <div class="tab" data-tab="project3">Shell (China)</div>
+                </div>
+                <div id="project1" class="tab-content active">
+                     <h3 class="text-xl font-bold text-gray-800 font-display">Data Governance Assessment & Design</h3>
+                     <ul class="mt-4 space-y-2 text-gray-700 list-disc list-inside">
+                        <li>Directed the end-to-end assessment and design of the data governance framework.</li>
+                        <li>Established evaluation models for data quality, security, and availability.</li>
+                        <li>Identified critical data pain points within core systems (MES, ERP, PLM) and developed strategic improvement plans.</li>
+                        <li>Drove the creation of a cross-departmental governance organization and implemented automated monitoring tools to enhance data accuracy.</li>
+                    </ul>
+                </div>
+                <div id="project2" class="tab-content">
+                    <h3 class="text-xl font-bold text-gray-800 font-display">Master Data Management (MDM) Product Architecture</h3>
+                     <ul class="mt-4 space-y-2 text-gray-700 list-disc list-inside">
+                        <li>Spearheaded the design and implementation of a cloud-native MDM platform from the ground up.</li>
+                        <li>Led master data model design (Customer, Material, Supplier) and set data standards.</li>
+                        <li>Architected a distributed, microservices-based framework to resolve data conflicts across systems.</li>
+                        <li>Delivered a highly scalable platform that ensures data consistency for numerous large manufacturing clients.</li>
+                    </ul>
+                </div>
+                <div id="project3" class="tab-content">
+                     <h3 class="text-xl font-bold text-gray-800 font-display">Data Governance Assessment & Strategic Planning</h3>
+                     <ul class="mt-4 space-y-2 text-gray-700 list-disc list-inside">
+                       <li>Orchestrated a comprehensive data governance assessment and strategic plan based on the DAMA framework.</li>
+                       <li>Led a full-scale data asset inventory across all business lines (exploration, refining, retail).</li>
+                       <li>Developed a phased implementation roadmap, from discovery to enterprise-wide rollout.</li>
+                       <li>Established robust governance processes that empowered the client's "data-driven decision-making" strategy.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Showcase Section -->
+        <section id="showcase" class="mb-16 md:mb-24 scroll-mt-24">
+            <h2 class="text-3xl font-bold font-display mb-8 text-center">3. Data Architecture Framework</h2>
+            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">Based on my project experiences with clients like NTI (Australia), Rolex (China), and Swire, I've developed a comprehensive, three-layered data architecture framework. This structured approach ensures that every aspect of data management is aligned, from foundational asset management to value-added data services. Below are visual representations of the nine core modules that constitute this framework.</p>
+            
+            <div class="space-y-12">
+                <!-- Layer 1 -->
+                <div>
+                    <h3 class="text-2xl font-display font-semibold mb-6 text-center border-b pb-3">Foundational Layer</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="card p-4 text-center">
+                            <h4 class="font-semibold mb-2">Data Inventory</h4>
+                            <div class="mini-chart-container"><canvas id="chart1"></canvas></div>
+                            <p class="text-xs text-gray-500 mt-2">Identifying and cataloging all data sources across the enterprise.</p>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <h4 class="font-semibold mb-2">Data Classification</h4>
+                            <div class="mini-chart-container"><canvas id="chart2"></canvas></div>
+                             <p class="text-xs text-gray-500 mt-2">Classifying data based on sensitivity (e.g., public, confidential, PII).</p>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <h4 class="font-semibold mb-2">Data Flow</h4>
+                            <div class="mini-chart-container"><canvas id="chart3"></canvas></div>
+                             <p class="text-xs text-gray-500 mt-2">Mapping the flow of business data between key enterprise systems.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer 2 -->
+                <div>
+                    <h3 class="text-2xl font-display font-semibold mb-6 text-center border-b pb-3">Integration Layer</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="card p-4 text-center">
+                            <h4 class="font-semibold mb-2">Data Mapping</h4>
+                            <div class="mini-chart-container"><canvas id="chart4"></canvas></div>
+                            <p class="text-xs text-gray-500 mt-2">Defining relationships and transformations between source and target systems.</p>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <h4 class="font-semibold mb-2">Data Standards</h4>
+                            <div class="mini-chart-container"><canvas id="chart5"></canvas></div>
+                             <p class="text-xs text-gray-500 mt-2">Establishing consistent definitions and formats for key data entities.</p>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <h4 class="font-semibold mb-2">Data Metrics</h4>
+                            <div class="mini-chart-container"><canvas id="chart6"></canvas></div>
+                             <p class="text-xs text-gray-500 mt-2">Tracking KPIs to measure the effectiveness of data processes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer 3 -->
+                <div>
+                    <h3 class="text-2xl font-display font-semibold mb-6 text-center border-b pb-3">Service Layer</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="card p-4 text-center">
+                            <h4 class="font-semibold mb-2">Data Quality</h4>
+                            <div class="mini-chart-container"><canvas id="chart7"></canvas></div>
+                             <p class="text-xs text-gray-500 mt-2">Monitoring and improving the accuracy, completeness, and consistency of data.</p>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <h4 class="font-semibold mb-2">Data Modeling</h4>
+                            <div class="mini-chart-container"><canvas id="chart8"></canvas></div>
+                            <p class="text-xs text-gray-500 mt-2">Transforming business requirements into conceptual, logical, and physical data models.</p>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <h4 class="font-semibold mb-2">Data Service</h4>
+                            <div class="mini-chart-container"><canvas id="chart9"></canvas></div>
+                             <p class="text-xs text-gray-500 mt-2">Exposing trusted data to various roles through appropriate interfaces and tools.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Value Proposition Section -->
+        <section id="value" class="scroll-mt-24">
+            <h2 class="text-3xl font-bold font-display mb-8 text-center">4. My Value Proposition</h2>
+             <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">My approach is twofold: I build a solid foundation by systematically managing your data assets, and then I ensure this foundation is seamlessly integrated into your broader business and technology strategy.</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card p-8">
+                    <h3 class="text-2xl font-bold font-display mb-4">Systematic Data Asset Management</h3>
+                    <ul class="space-y-2 text-gray-700 list-disc list-inside">
+                        <li>Build a comprehensive inventory of critical data assets to establish a single source of truth.</li>
+                        <li>Collaborate with business stakeholders to define key data entities and attributes.</li>
+                        <li>Implement clear, consistent data standards across the organization.</li>
+                        <li>Align data architecture with core business objectives—from personalized client engagement to optimized inventory management.</li>
+                    </ul>
+                </div>
+                <div class="card p-8">
+                    <h3 class="text-2xl font-bold font-display mb-4">Integrating Data & Enterprise Architecture</h3>
+                    <ul class="space-y-2 text-gray-700 list-disc list-inside">
+                        <li>Align Data Architecture (DA) seamlessly with Enterprise Architecture (EA) to ensure a unified, enterprise-wide strategy.</li>
+                        <li>Design the data architecture around clearly defined business objects to reflect real-world operations.</li>
+                        <li>Establish centralized, scalable storage and processing solutions guided by robust technical data models.</li>
+                        <li>Implement an end-to-end strategy where technology empowers data, and data drives business outcomes.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white mt-16 md:mt-24">
+        <div class="container mx-auto px-6 py-8 text-center text-gray-600">
+             <p class="font-display text-2xl font-bold text-gray-800 mb-2">Let's build the future of luxury, together.</p>
+             <p>Ready to leverage data as your most valuable asset.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tabs functionality
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const tabsContainer = document.getElementById('tabs-container');
+
+            if (tabsContainer) {
+                tabsContainer.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('tab')) return;
+                    const tabId = e.target.dataset.tab;
+                    tabs.forEach(tab => tab.classList.remove('active'));
+                    e.target.classList.add('active');
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === tabId) content.classList.add('active');
+                    });
+                });
+            }
+
+            const miniChartTooltip = {
+                enabled: true,
+                bodyFont: { family: "'Inter', sans-serif" },
+                titleFont: { family: "'Inter', sans-serif" },
+            };
+            const miniChartLegend = { display: false };
+
+            // Layer 1 Charts
+            new Chart(document.getElementById('chart1').getContext('2d'), {
+                type: 'bar',
+                data: { labels: ['CRM', 'ERP', 'Web', 'SCM'], datasets: [{ label: 'Data Records', data: [65, 59, 80, 81], backgroundColor: ['#C5A47E', '#2C2C2C', '#777777', '#D6DBDC'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: miniChartLegend, tooltip: miniChartTooltip }, scales: { y: { beginAtZero: true } } }
+            });
+            new Chart(document.getElementById('chart2').getContext('2d'), {
+                type: 'pie',
+                data: { labels: ['Confidential', 'Internal', 'Public'], datasets: [{ data: [30, 55, 15], backgroundColor: ['#2C2C2C', '#777777', '#C5A47E'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } }, tooltip: miniChartTooltip } }
+            });
+
+            // Data Flow Chart
+            const dataFlowPlugin = {
+                id: 'dataFlowPlugin',
+                afterDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    const meta = chart.getDatasetMeta(0);
+                    if (!meta.data || meta.data.length === 0) return;
+                    const points = meta.data;
+
+                    const connections = [
+                        { from: 'OMS', to: 'ERP', label: 'Order Data' },
+                        { from: 'ERP', to: 'WMS', label: 'Inventory Data' },
+                        { from: 'WMS', to: 'OMS', label: 'Shipping Status' }
+                    ];
+
+                    const getPoint = (label) => points.find(p => p.raw && p.raw.label === label);
+
+                    ctx.save();
+                    ctx.strokeStyle = '#9ca3af';
+                    ctx.lineWidth = 1.5;
+                    ctx.font = "italic 10px 'Inter', sans-serif";
+                    ctx.fillStyle = '#6b7280';
+                    ctx.textAlign = 'center';
+
+                    connections.forEach(conn => {
+                        const fromPoint = getPoint(conn.from);
+                        const toPoint = getPoint(conn.to);
+                        if (fromPoint && toPoint) {
+                            ctx.beginPath();
+                            ctx.moveTo(fromPoint.x, fromPoint.y);
+                            ctx.lineTo(toPoint.x, toPoint.y);
+                            ctx.stroke();
+
+                            const midX = (fromPoint.x + toPoint.x) / 2;
+                            const midY = (fromPoint.y + toPoint.y) / 2;
+                            ctx.fillText(conn.label, midX, midY - 5);
+                        }
+                    });
+
+                    ctx.restore();
+                }
+            };
+
+            new Chart(document.getElementById('chart3').getContext('2d'), {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Systems',
+                        data: [
+                            { x: 1, y: 4, r: 18, label: 'OMS' },
+                            { x: 3, y: 7, r: 18, label: 'ERP' },
+                            { x: 5, y: 4, r: 18, label: 'WMS' },
+                            { x: 3, y: 1, r: 18, label: 'OA' }
+                        ],
+                        backgroundColor: ['#C5A47E', '#2C2C2C', '#777777', '#A9A9A9']
+                    }]
+                },
+                plugins: [dataFlowPlugin],
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return context.raw.label; }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { display: false, min: 0, max: 6 },
+                        y: { display: false, min: 0, max: 8 }
+                    }
+                }
+            });
+            
+            // Layer 2 Charts
+            const dataMappingPlugin = {
+                id: 'dataMappingPlugin',
+                afterDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    const sourceMeta = chart.getDatasetMeta(0);
+                    const targetMeta = chart.getDatasetMeta(1);
+
+                    if (sourceMeta.data.length > 0 && targetMeta.data.length > 0) {
+                        const sourcePoint = sourceMeta.data[0];
+                        const targetPoint = targetMeta.data[0];
+                        ctx.save();
+                        ctx.strokeStyle = '#777777';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(sourcePoint.x, sourcePoint.y);
+                        ctx.lineTo(targetPoint.x, targetPoint.y);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            };
+
+            new Chart(document.getElementById('chart4').getContext('2d'), {
+                type: 'bubble',
+                data: { datasets: [
+                    { label: 'Source', data: [{x:1, y:1, r:10, label: 'Source'}], backgroundColor: '#2C2C2C'}, 
+                    { label: 'Target', data: [{x:4, y:4, r:10, label: 'Target'}], backgroundColor: '#C5A47E'}] 
+                },
+                plugins: [dataMappingPlugin],
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: { legend: miniChartLegend, tooltip: miniChartTooltip },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+            new Chart(document.getElementById('chart5').getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: ['Adherence', 'Gaps'], datasets: [{ data: [85, 15], backgroundColor: ['#C5A47E', '#f0f0f0'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: miniChartLegend, tooltip: miniChartTooltip } }
+            });
+            new Chart(document.getElementById('chart6').getContext('2d'), {
+                type: 'radar',
+                data: { labels: ['Accuracy', 'Completeness', 'Timeliness', 'Validity'], datasets: [{ label: 'Score', data: [90, 75, 80, 95], backgroundColor: 'rgba(197, 164, 126, 0.2)', borderColor: '#C5A47E', pointBackgroundColor: '#C5A47E' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: miniChartLegend, tooltip: miniChartTooltip }, scales: { r: { beginAtZero: true, max: 100 } } }
+            });
+
+            // Layer 3 Charts
+            new Chart(document.getElementById('chart7').getContext('2d'), {
+                type: 'bar',
+                data: { labels: ['Q1', 'Q2', 'Q3', 'Q4'], datasets: [{ label: 'Completeness %', data: [92, 94, 95, 98], backgroundColor: '#C5A47E' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: miniChartLegend, tooltip: miniChartTooltip }, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+            new Chart(document.getElementById('chart8').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Model Stage'],
+                    datasets: [
+                        { label: 'Conceptual', data: [30], backgroundColor: '#777777' },
+                        { label: 'Logical', data: [40], backgroundColor: '#C5A47E' },
+                        { label: 'Physical', data: [30], backgroundColor: '#2C2C2C' }
+                    ]
+                },
+                options: { 
+                    indexAxis: 'y', 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { x: { stacked: true, display: false }, y: { stacked: true, display: false } },
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { boxWidth: 12 } },
+                        tooltip: miniChartTooltip
+                    } 
+                }
+            });
+            new Chart(document.getElementById('chart9').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Business User', 'Data Analyst', 'Data Scientist'],
+                    datasets: [
+                        { label: 'Dashboards', data: [80, 50, 10], backgroundColor: '#C5A47E' },
+                        { label: 'SQL Access', data: [20, 40, 40], backgroundColor: '#777777' },
+                        { label: 'ML Models', data: [0, 10, 50], backgroundColor: '#2C2C2C' },
+                    ]
+                },
+                options: { 
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { stacked: true, ticks: { callback: v => v + '%' } }, y: { stacked: true } },
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { boxWidth: 12 } },
+                        tooltip: { 
+                            ...miniChartTooltip,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        label += context.parsed.x + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        } 
+                    }
+                }
+            });
+            
+            // Active Nav Link on Scroll
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 150) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
